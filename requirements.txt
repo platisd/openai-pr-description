@@ -1,0 +1,2 @@
+requests>=2.18
+openai==0.27.2
