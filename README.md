@@ -16,8 +16,8 @@ The GitHub Action will only run when a PR description is not already provided.
 In other words it will not accidentally overwrite your existing description.
 The idea is this Action will save you the time and trouble of writing **meaningful** pull request descriptions.<br>
 You can customize it in different ways. One of them allows the Action to only run on pull requests started
-by one or more users, e.g. the main maintainers of the repository.
-This is because the OpenAI API is not free to use. That being said, so far it's been rather cheap,
+by specific users, e.g. the main maintainers of the repository.
+Keep in mind the OpenAI API is not free to use. That being said, so far it's been rather cheap,
 i.e. around ~$0.10 for 15-20 pull requests so far.
 
 ## How can you use it?
