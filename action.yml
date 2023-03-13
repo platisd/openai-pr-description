@@ -28,9 +28,9 @@ inputs:
     required: false
     default: '0.6'
   sample_prompt:
-    description: 'Sample prompt to use for the model'
+    description: 'Sample prompt to use for the model, refer to SAMPLE_PROMPT in the Python file.'
     required: false
-    default: 'This is a sample prompt used for giving the model some guidelines. Refer to SAMPLE_PROMPT in the Python file.'
+    default: ''
   sample_response:
     description: 'A sample of an ideal response based on the sample prompt'
     required: false
