@@ -175,6 +175,7 @@ The title of the pull request is "{pull_request_title}" and the following change
     if len(completion_prompt) > max_allowed_characters:
         completion_prompt = completion_prompt[:max_allowed_characters]
 
+    openai.api_key = openai_api_key
     openai_response = openai.ChatCompletion.create(
         model=open_ai_model,
         messages=[
