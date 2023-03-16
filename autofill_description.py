@@ -192,6 +192,12 @@ The title of the pull request is "{pull_request_title}" and the following change
     )
 
     generated_pr_description = openai_response.choices[0].message.content
+    redundant_prefix = "This pull request "
+    if generated_pr_description.startswith(redundant_prefix):
+        generated_pr_description = generated_pr_description[len(redundant_prefix) :]
+        generated_pr_description = (
+            generated_pr_description[0].upper() + generated_pr_description[1:]
+        )
     print(f"Generated pull request description: '{generated_pr_description}'")
     issues_url = "%s/repos/%s/issues/%s" % (
         github_api_url,
