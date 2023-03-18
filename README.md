@@ -77,3 +77,10 @@ jobs:
   than the PR description I originally had. 😅
 
 ![clang-tidy-pr-comments-screenshot](media/clang-tidy-pr-comments-screenshot.png)
+
+### `403` error when updating the PR description
+
+If you get a `403` error when trying to update the PR description, it's most likely because
+the GitHub Action is not allowed to do so.
+The easiest way forward is to grant the necessary permissions to the `GITHUB_TOKEN` secret
+at `<your_repo_url>/settings/actions` under `Workflow permissions`.
