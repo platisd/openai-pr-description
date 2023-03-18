@@ -1,5 +1,5 @@
-name: 'Autofill PR description'
-description: "Autofill you pull request's description by harvesting the power of ChatGPT"
+name: 'Autofill PR Description with OpenAI'
+description: "Autofill you pull request with a high quality description by harvesting the power of OpenAI and ChatGPT"
 inputs:
   github_token:
     description: 'The GitHub token'
