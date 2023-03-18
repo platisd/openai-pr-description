@@ -215,6 +215,7 @@ The title of the pull request is "{pull_request_title}" and the following change
             "Request to update pull request description failed: "
             + str(update_pr_description_result.status_code)
         )
+        print("Response: " + update_pr_description_result.text)
         return 1
 
 
