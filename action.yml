@@ -35,6 +35,10 @@ inputs:
     description: 'A sample of an ideal response based on the sample prompt'
     required: false
     default: ''
+  completion_prompt:
+    description: 'Prompt to use as the final prompt to the model, refer to COMPLETION_PROMPT in the Python file.'
+    required: false
+    default: ''
 
 runs:
   using: 'docker'
