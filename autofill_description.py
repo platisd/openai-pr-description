@@ -103,9 +103,7 @@ def main():
     model_sample_response = os.environ.get(
         "INPUT_MODEL_SAMPLE_RESPONSE", GOOD_SAMPLE_RESPONSE
     )
-    completion_prompt = os.environ.get(
-        "INPUT_COMPLETION_PROMPT", COMPLETION_PROMPT
-    )
+    completion_prompt = os.environ.get("INPUT_COMPLETION_PROMPT", COMPLETION_PROMPT)
     authorization_header = {
         "Accept": "application/vnd.github.v3+json",
         "Authorization": "token %s" % github_token,
@@ -177,8 +175,8 @@ def main():
     if len(completion_prompt) > max_allowed_characters:
         completion_prompt = completion_prompt[:max_allowed_characters]
 
-    openai.api_key = openai_api_key
-    openai_response = openai.ChatCompletion.create(
+    openai_client = openai.OpenAI(api_key=openai_api_key)
+    openai_response = openai_client.chat.completions.create(
         model=open_ai_model,
         messages=[
             {
