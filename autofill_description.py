@@ -46,6 +46,11 @@ This pull request adds Valgrind to the CI build, so that any memory errors will 
 Overall, this change will improve the quality of the project by helping us detect and prevent memory errors.
 """
 
+COMPLETION_PROMPT = f"""
+Write a pull request description focusing on the motivation behind the change and why it improves the project.
+Go straight to the point. The following changes took place: \n
+"""
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -97,6 +102,9 @@ def main():
     model_sample_prompt = os.environ.get("INPUT_MODEL_SAMPLE_PROMPT", SAMPLE_PROMPT)
     model_sample_response = os.environ.get(
         "INPUT_MODEL_SAMPLE_RESPONSE", GOOD_SAMPLE_RESPONSE
+    )
+    completion_prompt = os.environ.get(
+        "INPUT_COMPLETION_PROMPT", COMPLETION_PROMPT
     )
     authorization_header = {
         "Accept": "application/vnd.github.v3+json",
@@ -153,12 +161,6 @@ def main():
 
         pull_request_files.extend(pull_files_chunk)
 
-        completion_prompt = f"""
-Write a pull request description focusing on the motivation behind the change and why it improves the project.
-Go straight to the point.
-
-The title of the pull request is "{pull_request_title}" and the following changes took place: \n
-"""
     for pull_request_file in pull_request_files:
         # Not all PR file metadata entries may contain a patch section
         # For example, entries related to removed binary files may not contain it
@@ -185,6 +187,10 @@ The title of the pull request is "{pull_request_title}" and the following change
             },
             {"role": "user", "content": model_sample_prompt},
             {"role": "assistant", "content": model_sample_response},
+            {
+                "role": "user",
+                "content": "Title of the pull request: " + pull_request_title,
+            },
             {"role": "user", "content": completion_prompt},
         ],
         temperature=model_temperature,

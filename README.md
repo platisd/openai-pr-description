@@ -42,16 +42,17 @@ jobs:
           openai_api_key: ${{ secrets.OPENAI_API_KEY }}
 ```
 
-| Input             | Description                                           | Required | Default                    |
-| ----------------- | ----------------------------------------------------- | -------- | -------------------------- |
-| `github_token`    | The GitHub token to use for the Action                | Yes      |                            |
-| `openai_api_key`  | The [OpenAI API key] to use, keep it hidden           | Yes      |                            |
-| `pull_request_id` | The ID of the pull request to use                     | No       | Extracted from metadata    |
-| `openai_model`    | The [OpenAI model] to use                             | No       | `gpt-3.5-turbo`            |
-| `max_tokens`      | The maximum number of **prompt tokens** to use        | No       | `1000`                     |
-| `temperature`     | Higher values will make the model more creative (0-2) | No       | `0.6`                      |
-| `sample_prompt`   | The prompt to use for giving context to the model     | No       | See `SAMPLE_PROMPT`        |
-| `sample_response` | A sample response for giving context to the model     | No       | See `GOOD_SAMPLE_RESPONSE` |
+| Input               | Description                                                    | Required | Default                    |
+| ------------------- | -------------------------------------------------------------- | -------- | -------------------------- |
+| `github_token`      | The GitHub token to use for the Action                         | Yes      |                            |
+| `openai_api_key`    | The [OpenAI API key] to use, keep it hidden                    | Yes      |                            |
+| `pull_request_id`   | The ID of the pull request to use                              | No       | Extracted from metadata    |
+| `openai_model`      | The [OpenAI model] to use                                      | No       | `gpt-3.5-turbo`            |
+| `max_tokens`        | The maximum number of **prompt tokens** to use                 | No       | `1000`                     |
+| `temperature`       | Higher values will make the model more creative (0-2)          | No       | `0.6`                      |
+| `sample_prompt`     | The prompt to use for giving context to the model              | No       | See `SAMPLE_PROMPT`        |
+| `sample_response`   | A sample response for giving context to the model              | No       | See `GOOD_SAMPLE_RESPONSE` |
+| `completion_prompt` | The prompt to use for the model to generate the PR description | No       | See `COMPLETION_PROMPT`    |
 
 
 [OpenAI API key]: https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key
