@@ -12,8 +12,9 @@ fill up the description of your pull request. Just like ChatGPT would! 🎉<br>
 The Action tries to focus on **why** the changes are needed rather on **what** they are,
 like any proper pull request description should.
 
-The GitHub Action will only run when a PR description is not already provided.
-In other words it will not accidentally overwrite your existing description.
+The GitHub Action will (by default) only run when a PR description is not already provided.
+In other words it will not accidentally overwrite your existing description,
+unless you opt-in to do so by setting the `overwrite_description` input to `true`.
 The idea is this Action will save you the time and trouble of writing **meaningful** pull request descriptions.<br>
 You can customize it in different ways. One of them allows the Action to only run on pull requests started
 by specific users, e.g. the main maintainers of the repository.
@@ -42,17 +43,18 @@ jobs:
           openai_api_key: ${{ secrets.OPENAI_API_KEY }}
 ```
 
-| Input               | Description                                                    | Required | Default                    |
-| ------------------- | -------------------------------------------------------------- | -------- | -------------------------- |
-| `github_token`      | The GitHub token to use for the Action                         | Yes      |                            |
-| `openai_api_key`    | The [OpenAI API key] to use, keep it hidden                    | Yes      |                            |
-| `pull_request_id`   | The ID of the pull request to use                              | No       | Extracted from metadata    |
-| `openai_model`      | The [OpenAI model] to use                                      | No       | `gpt-3.5-turbo`            |
-| `max_tokens`        | The maximum number of **prompt tokens** to use                 | No       | `1000`                     |
-| `temperature`       | Higher values will make the model more creative (0-2)          | No       | `0.6`                      |
-| `sample_prompt`     | The prompt to use for giving context to the model              | No       | See `SAMPLE_PROMPT`        |
-| `sample_response`   | A sample response for giving context to the model              | No       | See `GOOD_SAMPLE_RESPONSE` |
-| `completion_prompt` | The prompt to use for the model to generate the PR description | No       | See `COMPLETION_PROMPT`    |
+| Input                   | Description                                                    | Required | Default                    |
+| ----------------------- | -------------------------------------------------------------- | -------- | -------------------------- |
+| `github_token`          | The GitHub token to use for the Action                         | Yes      |                            |
+| `openai_api_key`        | The [OpenAI API key] to use, keep it hidden                    | Yes      |                            |
+| `pull_request_id`       | The ID of the pull request to use                              | No       | Extracted from metadata    |
+| `openai_model`          | The [OpenAI model] to use                                      | No       | `gpt-3.5-turbo`            |
+| `max_tokens`            | The maximum number of **prompt tokens** to use                 | No       | `1000`                     |
+| `temperature`           | Higher values will make the model more creative (0-2)          | No       | `0.6`                      |
+| `sample_prompt`         | The prompt to use for giving context to the model              | No       | See `SAMPLE_PROMPT`        |
+| `sample_response`       | A sample response for giving context to the model              | No       | See `GOOD_SAMPLE_RESPONSE` |
+| `completion_prompt`     | The prompt to use for the model to generate the PR description | No       | See `COMPLETION_PROMPT`    |
+| `overwrite_description` | Whether to overwrite the PR description if it already exists   | No       | `false`                    |
 
 
 [OpenAI API key]: https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key
