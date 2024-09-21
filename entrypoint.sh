@@ -19,4 +19,5 @@ fi
   --pull-request-id "$pull_request_id" \
   --github-token "$INPUT_GITHUB_TOKEN" \
   --openai-api-key "$INPUT_OPENAI_API_KEY" \
+  --azure-openai-api-key "$INPUT_AZURE_OPENAI_API_KEY" \
 

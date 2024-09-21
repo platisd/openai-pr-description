@@ -4,13 +4,14 @@ import requests
 import argparse
 import json
 import openai
+from openai import AzureOpenAI
 import os
 
 SAMPLE_PROMPT = """
 Write a pull request description focusing on the motivation behind the change and why it improves the project.
 Go straight to the point.
 
-The title of the pull request is "Enable valgrind on CI" and the following changes took place: 
+The title of the pull request is "Enable valgrind on CI" and the following changes took place:
 
 Changes in file .github/workflows/build-ut-coverage.yml: @@ -24,6 +24,7 @@ jobs:
          run: |
@@ -34,7 +35,7 @@ Changes in file test/CommandParserTest.cpp: @@ -566,7 +566,7 @@ TEST(CommandPars
      double expectedDouble { std::numeric_limits<double>::max() };
 -    long double expectedLongDouble { std::numeric_limits<long double>::max() };
 +    long double expectedLongDouble { 123455678912349.1245678912349L };
- 
+
      auto command = UnparsedCommand::create(expectedCommand, "dummyDescription"s)
                         .withArgs<int, long, unsigned long, long long, unsigned long long, float, double, long double>();
 """
@@ -81,6 +82,12 @@ def main():
         help="The OpenAI API key",
     )
     parser.add_argument(
+        "--azure-openai-api-key",
+        type=str,
+        required=True,
+        help="The Azure OpenAI API key",
+    )
+    parser.add_argument(
         "--allowed-users",
         type=str,
         required=False,
@@ -93,17 +100,23 @@ def main():
     github_token = args.github_token
     pull_request_id = args.pull_request_id
     openai_api_key = args.openai_api_key
+    azure_openai_api_key = args.azure_openai_api_key
     allowed_users = os.environ.get("INPUT_ALLOWED_USERS", "")
     if allowed_users:
         allowed_users = allowed_users.split(",")
     open_ai_model = os.environ.get("INPUT_OPENAI_MODEL", "gpt-4o-mini")
     max_prompt_tokens = int(os.environ.get("INPUT_MAX_TOKENS", "1000"))
     model_temperature = float(os.environ.get("INPUT_TEMPERATURE", "0.6"))
-    model_sample_prompt = os.environ.get("INPUT_MODEL_SAMPLE_PROMPT", SAMPLE_PROMPT)
+    azure_open_ai_endpoint = os.environ.get(
+        "INPUT_AZURE_OPENAI_ENDPOINT", "")
+    azure_open_ai_version = os.environ.get("INPUT_AZURE_OPENAI_VERSION", "")
+    model_sample_prompt = os.environ.get(
+        "INPUT_MODEL_SAMPLE_PROMPT", SAMPLE_PROMPT)
     model_sample_response = os.environ.get(
         "INPUT_MODEL_SAMPLE_RESPONSE", GOOD_SAMPLE_RESPONSE
     )
-    completion_prompt = os.environ.get("INPUT_COMPLETION_PROMPT", COMPLETION_PROMPT)
+    completion_prompt = os.environ.get(
+        "INPUT_COMPLETION_PROMPT", COMPLETION_PROMPT)
     authorization_header = {
         "Accept": "application/vnd.github.v3+json",
         "Authorization": "token %s" % github_token,
@@ -122,7 +135,8 @@ def main():
         return 1
     pull_request_data = json.loads(pull_request_result.text)
 
-    overwrite_description = os.environ.get("INPUT_OVERWRITE_DESCRIPTION", "false")
+    overwrite_description = os.environ.get(
+        "INPUT_OVERWRITE_DESCRIPTION", "false")
     if pull_request_data["body"] and overwrite_description.lower() == "false":
         print("Pull request already has a description, skipping")
         return 0
@@ -176,30 +190,58 @@ def main():
     if len(completion_prompt) > max_allowed_characters:
         completion_prompt = completion_prompt[:max_allowed_characters]
 
-    openai_client = openai.OpenAI(api_key=openai_api_key)
-    openai_response = openai_client.chat.completions.create(
-        model=open_ai_model,
-        messages=[
-            {
-                "role": "system",
-                "content": "You are a helpful assistant who writes pull request descriptions",
-            },
-            {"role": "user", "content": model_sample_prompt},
-            {"role": "assistant", "content": model_sample_response},
-            {
-                "role": "user",
-                "content": "Title of the pull request: " + pull_request_title,
-            },
-            {"role": "user", "content": completion_prompt},
-        ],
-        temperature=model_temperature,
-        max_tokens=max_prompt_tokens,
-    )
+    generated_pr_description = ""
+    if openai_api_key != "":
+        openai_client = openai.OpenAI(api_key=openai_api_key)
+        openai_response = openai_client.chat.completions.create(
+            model=open_ai_model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a helpful assistant who writes pull request descriptions",
+                },
+                {"role": "user", "content": model_sample_prompt},
+                {"role": "assistant", "content": model_sample_response},
+                {
+                    "role": "user",
+                    "content": "Title of the pull request: " + pull_request_title,
+                },
+                {"role": "user", "content": completion_prompt},
+            ],
+            temperature=model_temperature,
+            max_tokens=max_prompt_tokens,
+        )
+        generated_pr_description = openai_response.choices[0].message.content
 
-    generated_pr_description = openai_response.choices[0].message.content
-    redundant_prefix = "This pull request "
+    elif azure_openai_api_key != "":
+        azure_openai_client = AzureOpenAI(
+            api_key=azure_openai_api_key,
+            endpoint=azure_open_ai_endpoint,
+            version=azure_open_ai_version
+        )
+        azure_openai_response = azure_openai_client.chat.completions.create(
+            model=open_ai_model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a helpful assistant who writes pull request descriptions",
+                },
+                {"role": "user", "content": model_sample_prompt},
+                {"role": "assistant", "content": model_sample_response},
+                {
+                    "role": "user",
+                    "content": "Title of the pull request: " + pull_request_title,
+                },
+                {"role": "user", "content": completion_prompt},
+            ],
+            temperature=model_temperature,
+            max_tokens=max_prompt_tokens,
+        )
+        generated_pr_description = azure_openai_response.choices[0].message.content
+
     if generated_pr_description.startswith(redundant_prefix):
-        generated_pr_description = generated_pr_description[len(redundant_prefix) :]
+        generated_pr_description = generated_pr_description[len(
+            redundant_prefix):]
         generated_pr_description = (
             generated_pr_description[0].upper() + generated_pr_description[1:]
         )

@@ -7,6 +7,9 @@ inputs:
   openai_api_key:
     description: 'OpenAI API key'
     required: true
+  azure_openai_api_key:
+    description: 'Azure OpenAI API key'
+    required: true
   pull_request_id:
     description: 'Pull request id (otherwise attempt to extract it from the GitHub metadata)'
     required: false
@@ -19,6 +22,14 @@ inputs:
     description: 'OpenAI model to use, needs to be compatible with the chat/completions endpoint'
     required: false
     default: 'gpt-4o-mini'
+  azure_openai_endpoint:
+    description: 'Azure OpenAI endpoint to use.'
+    required: false
+    default: ''
+  azure_openai_version:
+    description: 'Azure OpenAI version to use.'
+    required: false
+    default: ''
   max_tokens:
     description: 'Maximum number of prompt tokens to use'
     required: false
