@@ -176,7 +176,18 @@ def main():
     if len(completion_prompt) > max_allowed_characters:
         completion_prompt = completion_prompt[:max_allowed_characters]
 
-    openai_client = openai.OpenAI(api_key=openai_api_key)
+    azure_endpoint = os.environ.get("INPUT_AZURE_ENDPOINT", "")
+    azure_openai_api_version = os.environ.get("INPUT_AZURE_OPENAI_API_VERSION", "")
+
+    openai_client = (
+        openai.AzureOpenAI(
+            api_key=openai_api_key,
+            azure_endpoint=azure_endpoint,
+            api_version=azure_openai_api_version,
+        )
+        if azure_endpoint
+        else openai.OpenAI(api_key=openai_api_key)
+    )
     openai_response = openai_client.chat.completions.create(
         model=open_ai_model,
         messages=[

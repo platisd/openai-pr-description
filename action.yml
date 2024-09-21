@@ -43,6 +43,14 @@ inputs:
     description: 'Overwrite the PR description if it already exists. This also means that the action will run on every PR update'
     required: false
     default: 'false'
+  azure_endpoint:
+    description: 'Azure endpoint for OpenAI, if you are using Azure. Setting this will make the action use Azure OpenAI.'
+    required: false
+    default: ''
+  azure_openai_api_version:
+    description: 'OpenAI API version, if you are using Azure.'
+    required: false
+    default: ''
 
 runs:
   using: 'docker'
